@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>S3 Tutorial</title>
+</head>
+<body>
+    <div class="row justify-content-center mt-5">
+      <div class="col-6 align-self-center">
+        <h1 class="text-primary">
+          Flask S3
+        </h1>
+        
+        <form method="post" action="{{ url_for('sign_up_new_user') }}" class="form-inline my-4">
+          <div class="row">
+            <h2>Create user</h2>
+            <div class="form-group col-10">
+              <input type="text" class="form-control" name="name" placeholder="Users name....">
+            </div>
+            <div class="form-group col-2">
+              <button type="submit" class="btn btn-primary">Create User</button>
+            </div>
+          </div>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} col-lg-12">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Profile Pic</th>
+              <th scope="col">User Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Upload Image</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <th>
+                  {% if user.provided_file_name and user.stored_file_name %}
+                    <img style="max-height: 50px; max-width: 50px;" src="{{ user.get_profile_picture_url() }}" class="rounded float-left">
+                  {% else %}
+                    <p>No Image</p>
+                  {% endif %}
+              </th>
+              <td>{{ user.id }}</td>
+              <td>{{ user.name }}</td>
+              <td>
+                <form method="post" enctype="multipart/form-data" action='{{ url_for("upload_image", user_id=user.id) }}'>
+                  <div class="input-group">
+                    <input type="file" class="form-control" name="file" aria-label="Upload">
+                    <button class="btn btn-outline-secondary" type="submit" >Submit</button>
+                  </div>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>    
+</body>
+</html>
